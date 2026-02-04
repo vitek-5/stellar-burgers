@@ -18,5 +18,9 @@ export const Feed: FC = () => {
   };
   const orders: TOrder[] = useSelector(selectFeedOrders);
 
+  if (orders.length === 0) {
+    return <Preloader />;
+  }
+
   return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };

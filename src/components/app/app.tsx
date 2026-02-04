@@ -14,131 +14,121 @@ import '../../index.css';
 import styles from './app.module.css';
 import { AppHeader } from '@components';
 import {
-  createBrowserRouter,
-  Outlet,
-  RouterProvider,
+  Routes,
+  Route,
   useLocation,
-  useNavigate,
-  useParams
+  useParams,
+  useNavigate
 } from 'react-router-dom';
 import { Modal } from '../modal';
 import { OrderInfo, IngredientDetails } from '@components';
 import { ProtectedRoute } from './components/protected-route/protected-route';
 import { useDispatch } from '@store';
 import { useEffect } from 'react';
-import { getUserApi } from '@api';
-import { getUserThunk } from '@slices';
+import { getIngredientsThunk, getUserThunk } from '@slices';
 
-const AppLayout = () => {
+const AppContent = () => {
   const location = useLocation();
   const background = location.state?.background;
   const navigate = useNavigate();
 
   return (
     <>
-      <AppHeader />
-      <Outlet />
+      <Routes location={background || location}>
+        <Route path='/' element={<ConstructorPage />} />
+        <Route path='/feed' element={<Feed />} />
+        <Route path='/profile/orders' element={<ProfileOrders />} />
+        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route path='/profile/orders/:number' element={<OrderInfo />} />
+        // Защищенные маршруты
+        <Route
+          path='/login'
+          element={
+            <ProtectedRoute unAuth>
+              <Login />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/register'
+          element={
+            <ProtectedRoute unAuth>
+              <Register />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/forgot-password'
+          element={
+            <ProtectedRoute unAuth>
+              <ForgotPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/reset-password'
+          element={
+            <ProtectedRoute unAuth>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/profile'
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='*' element={<NotFound404 />} />
+      </Routes>
 
-      {background && location.pathname.startsWith('/feed') && (
-        <Modal title='Детали заказа' onClose={() => navigate(-1)}>
-          <OrderInfo />
-        </Modal>
-      )}
-
-      {background && location.pathname.startsWith('/ingredients') && (
-        <Modal title='Детали ингридиента' onClose={() => navigate(-1)}>
-          <IngredientDetails />
-        </Modal>
-      )}
-
-      {background && location.pathname.startsWith('/profile/orders') && (
-        <Modal title='Детали заказа' onClose={() => navigate(-1)}>
-          <OrderInfo />
-        </Modal>
+      {background && (
+        <Routes>
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title='' onClose={() => navigate(-1)}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
+          <Route
+            path='/feed/:number'
+            element={
+              <Modal title='' onClose={() => navigate(-1)}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <Modal title='' onClose={() => navigate(-1)}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+        </Routes>
       )}
     </>
   );
 };
-
-const router = createBrowserRouter([
-  {
-    element: <AppLayout />,
-    children: [
-      { path: '/', element: <ConstructorPage /> },
-      { path: '/feed', element: <Feed /> },
-      { path: '/feed/:number', element: <Feed /> },
-      { path: '/ingredients/:id', element: <ConstructorPage /> },
-      {
-        path: '/login',
-        element: (
-          <ProtectedRoute unAuth>
-            <Login />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/register',
-        element: (
-          <ProtectedRoute unAuth>
-            <Register />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/forgot-password',
-        element: (
-          <ProtectedRoute unAuth>
-            <ForgotPassword />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/reset-password',
-        element: (
-          <ProtectedRoute unAuth>
-            <ResetPassword />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/profile',
-        element: (
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/profile/orders',
-        element: (
-          <ProtectedRoute>
-            <ProfileOrders />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: '/profile/orders/:number',
-        element: (
-          <ProtectedRoute>
-            <ProfileOrders />
-          </ProtectedRoute>
-        )
-      },
-      { path: '*', element: <NotFound404 /> }
-    ]
-  }
-]);
 
 const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getUserThunk());
+    dispatch(getIngredientsThunk());
   }, [dispatch]);
 
   return (
     <div className={styles.app}>
-      <RouterProvider router={router} />
+      <AppHeader />
+      <AppContent />
     </div>
   );
 };

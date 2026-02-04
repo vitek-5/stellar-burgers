@@ -1,5 +1,5 @@
 import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
-import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
+import { TConstructorIngredient, TIngredient } from '@utils-types';
 
 type TConstructorState = {
   constructorItems: {
@@ -34,6 +34,34 @@ const constructorSlice = createSlice({
       }
     },
 
+    // Перемещение ингредиента вверх
+    moveIngredientUp: (state, action: PayloadAction<number>) => {
+      const index = action.payload;
+      if (index > 0) {
+        [
+          state.constructorItems.ingredients[index - 1],
+          state.constructorItems.ingredients[index]
+        ] = [
+          state.constructorItems.ingredients[index],
+          state.constructorItems.ingredients[index - 1]
+        ];
+      }
+    },
+
+    // Перемещение ингредиента вниз
+    moveIngredientDown: (state, action: PayloadAction<number>) => {
+      const index = action.payload;
+      if (index < state.constructorItems.ingredients.length - 1) {
+        [
+          state.constructorItems.ingredients[index],
+          state.constructorItems.ingredients[index + 1]
+        ] = [
+          state.constructorItems.ingredients[index + 1],
+          state.constructorItems.ingredients[index]
+        ];
+      }
+    },
+
     // Удалить ингредиент по id
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.constructorItems.ingredients =
@@ -55,9 +83,12 @@ const constructorSlice = createSlice({
 
 export const constructorReducer = constructorSlice.reducer;
 
-// Экспорт экшенов
-export const { addIngredient, removeIngredient, clearConstructor } =
-  constructorSlice.actions;
+export const {
+  addIngredient,
+  removeIngredient,
+  clearConstructor,
+  moveIngredientUp,
+  moveIngredientDown
+} = constructorSlice.actions;
 
-// Экспорт селекторов
 export const { selectConstructorItems } = constructorSlice.selectors;

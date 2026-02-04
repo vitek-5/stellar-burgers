@@ -18,6 +18,7 @@ type TOrdersState = {
   user: {
     orders: TOrder[];
     newOrder: TOrder | null;
+    showModal: boolean;
     isLoading: boolean;
     error: string | null;
   };
@@ -39,6 +40,7 @@ const initialState: TOrdersState = {
   user: {
     orders: [],
     newOrder: null,
+    showModal: false,
     isLoading: false,
     error: null
   },
@@ -56,8 +58,9 @@ export const getFeedsThunk = createAsyncThunk<
 >('feeds/getAllFeeds', async (_, { rejectWithValue }) => {
   try {
     return await getFeedsApi();
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка загрузки ленты заказов');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка загрузки ленты заказов');
   }
 });
 
@@ -68,8 +71,9 @@ export const getOrderByNumberThunk = createAsyncThunk<
 >('orders/getOrderByNumber', async (number, { rejectWithValue }) => {
   try {
     return await getOrderByNumberApi(number);
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка загрузки заказа');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка загрузки заказа');
   }
 });
 
@@ -80,8 +84,9 @@ export const getUserOrdersThunk = createAsyncThunk<
 >('orders/getOrders', async (_, { rejectWithValue }) => {
   try {
     return await getOrdersApi();
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка загрузки ваших заказов');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка загрузки ваших заказов');
   }
 });
 
@@ -92,8 +97,9 @@ export const postUserOrderThunk = createAsyncThunk<
 >('orders/postNewOrder', async (data, { rejectWithValue }) => {
   try {
     return await orderBurgerApi(data);
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка создания заказа');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка создания заказа');
   }
 });
 
@@ -101,9 +107,8 @@ const ordersSlice = createSlice({
   name: 'orders',
   initialState,
   reducers: {
-    clearNewOrder: (state) => {
-      state.user.newOrder = null;
-      state.user.isLoading = false;
+    setShowModal: (state, action: PayloadAction<boolean>) => {
+      state.user.showModal = action.payload;
     }
   },
   selectors: {
@@ -119,6 +124,7 @@ const ordersSlice = createSlice({
     selectUserOrders: (state) => state.user.orders,
     selectNewOrderLoading: (state) => state.user.isLoading,
     selectNewOrderError: (state) => state.user.error,
+    selectShowModal: (state) => state.user.showModal,
 
     // Детали заказа (любого)
     selectCurrentOrder: (state) => state.orderInfo.currentOrder,
@@ -130,6 +136,7 @@ const ordersSlice = createSlice({
       // Лента заказов
       .addCase(getFeedsThunk.pending, (state) => {
         state.feed.isLoading = true;
+        state.feed.orders = [];
         state.feed.error = null;
       })
       .addCase(getFeedsThunk.fulfilled, (state, action) => {
@@ -160,6 +167,7 @@ const ordersSlice = createSlice({
       .addCase(postUserOrderThunk.pending, (state) => {
         state.user.isLoading = true;
         state.user.newOrder = null;
+        state.user.showModal = true;
         state.user.error = null;
       })
       .addCase(postUserOrderThunk.fulfilled, (state, action) => {
@@ -187,9 +195,9 @@ const ordersSlice = createSlice({
       });
   }
 });
-
-export const { clearNewOrder } = ordersSlice.actions;
 export const ordersReducer = ordersSlice.reducer;
+
+export const { setShowModal } = ordersSlice.actions;
 
 export const {
   selectFeedOrders,
@@ -200,6 +208,7 @@ export const {
   selectNewOrder,
   selectUserOrders,
   selectNewOrderLoading,
+  selectShowModal,
   selectCurrentOrder,
   selectIsOrderInfoLoading,
   selectOrderInfoError

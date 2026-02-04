@@ -34,8 +34,9 @@ export const registerUserThunk = createAsyncThunk<
     setCookie('accessToken', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);
     return response;
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка регистрации');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка регистрации');
   }
 });
 
@@ -49,8 +50,9 @@ export const loginUserThunk = createAsyncThunk<
     setCookie('accessToken', response.accessToken);
     localStorage.setItem('refreshToken', response.refreshToken);
     return response;
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка входа');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка входа');
   }
 });
 
@@ -64,8 +66,9 @@ export const logoutUserThunk = createAsyncThunk<
     deleteCookie('accessToken');
     localStorage.removeItem('refreshToken');
     return res;
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка выхода');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка выхода');
   }
 });
 
@@ -77,8 +80,9 @@ export const updateUserThunk = createAsyncThunk<
   try {
     const response = await updateUserApi(user);
     return response;
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка обновления профиля');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка обновления профиля');
   }
 });
 
@@ -89,8 +93,9 @@ export const forgotPasswordThunk = createAsyncThunk<
 >('user/forgotPassword', async (data, { rejectWithValue }) => {
   try {
     await forgotPasswordApi(data);
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка восстановления пароля');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка восстановления пароля');
   }
 });
 
@@ -101,8 +106,9 @@ export const resetPasswordThunk = createAsyncThunk<
 >('user/resetPassword', async (data, { rejectWithValue }) => {
   try {
     await resetPasswordApi(data);
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка сброса пароля');
+  } catch (err) {
+    const error = err as Error;
+    return rejectWithValue(error.message || 'Ошибка сброса пароля');
   }
 });
 
@@ -114,9 +120,10 @@ export const getUserThunk = createAsyncThunk<
   try {
     const response = await getUserApi();
     return response;
-  } catch (err: any) {
+  } catch (err) {
+    const error = err as Error;
     return rejectWithValue(
-      err.message || 'Ошибка получения данных пользователя'
+      error.message || 'Ошибка получения данных пользователя'
     );
   }
 });

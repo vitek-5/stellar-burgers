@@ -4,17 +4,11 @@ import styles from './constructor-page.module.css';
 
 import { BurgerIngredients, BurgerConstructor } from '@components';
 import { Preloader } from '@ui';
-import { FC, useEffect } from 'react';
-import { getIngredientsThunk, selectIsIngredientsLoading } from '@slices';
+import { FC } from 'react';
+import { selectIsIngredientsLoading } from '@slices';
 
 export const ConstructorPage: FC = () => {
   /** TODO: взять переменную из стора */
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getIngredientsThunk());
-  }, [dispatch]);
-
   const isIngredientsLoading = useSelector(selectIsIngredientsLoading);
 
   return (

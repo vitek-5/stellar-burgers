@@ -1,12 +1,11 @@
-// src/components/protected-route/protected-route.tsx
 import { selectIsAuth } from '@slices';
 import { ReactNode } from 'react';
-import { useSelector } from '@store'; // ← исправлен импорт
-import { Navigate, Outlet } from 'react-router-dom'; // ← исправлен импорт
+import { useSelector } from '@store';
+import { Navigate, Outlet } from 'react-router-dom';
 
 type TProtectedRouteProps = {
   children: ReactNode;
-  unAuth?: boolean; // ← необязательный параметр
+  unAuth?: boolean;
 };
 
 export const ProtectedRoute = ({
@@ -18,7 +17,7 @@ export const ProtectedRoute = ({
   if (unAuth) {
     // Только для НЕавторизованных
     if (isAuth) {
-      return <Navigate to='/' replace />; // ← на главную, а не в профиль
+      return <Navigate to='/' replace />;
     }
   } else {
     // Только для авторизованных
@@ -27,5 +26,5 @@ export const ProtectedRoute = ({
     }
   }
 
-  return children; // ← возвращаем children, а не Outlet
+  return children;
 };
