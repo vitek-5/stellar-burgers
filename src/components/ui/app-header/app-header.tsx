@@ -22,13 +22,13 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
           <BurgerIcon type={'primary'} />
           <p className='text text_type_main-default ml-2 mr-10'>Конструктор</p>
         </NavLink>
-        <ListIcon type={'primary'} />
         <NavLink
           to={'/feed'}
           className={({ isActive }) =>
             `${styles.link} ${isActive ? styles.link_active : ''}`
           }
         >
+          <ListIcon type={'primary'} />
           <p className='text text_type_main-default ml-2'>Лента заказов</p>
         </NavLink>
       </div>
