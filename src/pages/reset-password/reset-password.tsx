@@ -3,17 +3,20 @@ import { useNavigate } from 'react-router-dom';
 
 import { resetPasswordApi } from '@api';
 import { ResetPasswordUI } from '@ui-pages';
+import { resetPasswordThunk } from '@slices';
+import { useDispatch } from '@store';
 
 export const ResetPassword: FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [password, setPassword] = useState('');
   const [token, setToken] = useState('');
   const [error, setError] = useState<Error | null>(null);
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     setError(null);
-    resetPasswordApi({ password, token })
+    await dispatch(resetPasswordThunk({ password, token }))
       .then(() => {
         localStorage.removeItem('resetPassword');
         navigate('/login');

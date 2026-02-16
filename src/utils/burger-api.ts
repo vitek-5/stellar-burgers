@@ -1,5 +1,5 @@
-import { setCookie, getCookie } from './cookie';
-import { TIngredient, TOrder, TOrdersData, TUser } from './types';
+import { setCookie, getCookie } from '@cookie';
+import { TIngredient, TOrder, TUser } from '@utils-types';
 
 const URL = process.env.BURGER_API_URL;
 
@@ -68,7 +68,7 @@ type TFeedsResponse = TServerResponse<{
 }>;
 
 type TOrdersResponse = TServerResponse<{
-  data: TOrder[];
+  orders: TOrder[];
 }>;
 
 export const getIngredientsApi = () =>
@@ -88,7 +88,7 @@ export const getFeedsApi = () =>
     });
 
 export const getOrdersApi = () =>
-  fetchWithRefresh<TFeedsResponse>(`${URL}/orders`, {
+  fetchWithRefresh<TOrdersResponse>(`${URL}/orders`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
