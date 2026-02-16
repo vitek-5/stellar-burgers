@@ -9,7 +9,7 @@ import { forgotPasswordThunk } from '@slices';
 export const ForgotPassword: FC = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error | undefined>(undefined);
 
   const navigate = useNavigate();
 

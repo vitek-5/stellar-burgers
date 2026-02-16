@@ -13,13 +13,7 @@ import {
 import '../../index.css';
 import styles from './app.module.css';
 import { AppHeader } from '@components';
-import {
-  Routes,
-  Route,
-  useLocation,
-  useParams,
-  useNavigate
-} from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Modal } from '../modal';
 import { OrderInfo, IngredientDetails } from '@components';
 import { ProtectedRoute } from './components/protected-route/protected-route';
@@ -90,7 +84,11 @@ const AppContent = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal title='' onClose={() => navigate(-1)}>
+              <Modal
+                title=''
+                onClose={() => navigate(-1)}
+                dataCy='ingredient-modal'
+              >
                 <IngredientDetails />
               </Modal>
             }
@@ -98,7 +96,11 @@ const AppContent = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='' onClose={() => navigate(-1)}>
+              <Modal
+                title=''
+                onClose={() => navigate(-1)}
+                dataCy='order-info-modal'
+              >
                 <OrderInfo />
               </Modal>
             }
@@ -106,7 +108,11 @@ const AppContent = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='' onClose={() => navigate(-1)}>
+              <Modal
+                title=''
+                onClose={() => navigate(-1)}
+                dataCy='order-info-modal'
+              >
                 <OrderInfo />
               </Modal>
             }

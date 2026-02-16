@@ -11,11 +11,11 @@ export const ResetPassword: FC = () => {
   const dispatch = useDispatch();
   const [password, setPassword] = useState('');
   const [token, setToken] = useState('');
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error | undefined>(undefined);
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    setError(null);
+    setError(undefined);
     await dispatch(resetPasswordThunk({ password, token }))
       .then(() => {
         localStorage.removeItem('resetPassword');
