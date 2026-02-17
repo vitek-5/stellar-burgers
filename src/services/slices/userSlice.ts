@@ -13,7 +13,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
 import { deleteCookie, setCookie } from '@cookie';
 
-type TUserState = {
+export type TUserState = {
   user: TUser | null;
   isLoading: boolean;
   error?: string;
@@ -113,7 +113,7 @@ export const resetPasswordThunk = createAsyncThunk<
 });
 
 export const getUserThunk = createAsyncThunk<
-  Awaited<ReturnType<typeof getUserApi>>, // ← правильный тип возвращаемого значения
+  Awaited<ReturnType<typeof getUserApi>>,
   void,
   { rejectValue: string }
 >('user/getUser', async (_, { rejectWithValue }) => {

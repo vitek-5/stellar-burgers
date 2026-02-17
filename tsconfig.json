@@ -28,5 +28,6 @@
       "@store": ["./src/services/store"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["cypress", "node_modules"]
 }

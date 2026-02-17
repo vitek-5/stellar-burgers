@@ -7,7 +7,7 @@ import {
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
 
-type TOrdersState = {
+export type TOrdersState = {
   feed: {
     orders: TOrder[];
     total: number;
