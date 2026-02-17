@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "noEmit": false,
     "jsx": "react-jsx",
-    "types": ["node", "jest", "cypress"],
+    "types": ["node", "jest"],
     "paths": {
       "@pages": ["./src/pages"],
       "@components": ["./src/components"],
@@ -28,5 +28,6 @@
       "@store": ["./src/services/store"]
     }
   },
-  "include": ["src", "cypress/e2e/burger-constructor.cy.ts"]
+  "include": ["src"],
+  "exclude": ["cypress", "node_modules"]
 }

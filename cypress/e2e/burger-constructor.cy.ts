@@ -5,61 +5,65 @@ describe('Конструктор', () => {
   beforeEach(() => {
     cy.intercept('GET', '/api/ingredients', {
       fixture: 'ingredients.json'
-    });
-    cy.intercept('GET', 'api/auth/user', {
-      fixture: 'user.json'
-    });
-    cy.intercept('POST', '/api/orders', {
-      fixture: 'order.json'
-    });
+    }).as('getIngredients');
+    cy.intercept('GET', '/api/auth/user', { fixture: 'user.json' }).as(
+      'getUser'
+    );
+    cy.intercept('POST', '/api/orders', { fixture: 'order.json' }).as(
+      'postOrder'
+    );
 
-    cy.setCookie('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+    cy.setAuthTokens(accessToken, refreshToken);
+
     cy.visit('http://localhost:4000/');
+    cy.wait('@getIngredients');
+    cy.wait('@getUser');
   });
 
   afterEach(() => {
-    cy.clearCookie('accessToken');
-    localStorage.removeItem('refreshToken');
+    cy.clearAuthTokens();
   });
 
   it('должен добавлять ингредиенты в конструктор', () => {
-    cy.get('[data-cy="ingredient-1"]').find('button').click();
-    cy.get('[data-cy="constructor-bun"]').should('exist');
+    cy.addIngredientById('1');
+    cy.checkIngredientInConstructor('bun', 'Краторная булка N-200i');
 
-    cy.get('[data-cy="ingredient-2"]').find('button').click();
-    cy.get('[data-cy="constructor-ingredient-2"]').should('exist');
+    cy.addIngredientById('2');
+    cy.checkIngredientInConstructor(
+      'ingredient-2',
+      'Биокотлета из марсианской Магнолии'
+    );
 
-    cy.get('[data-cy="ingredient-3"]').find('button').click();
-    cy.get('[data-cy="constructor-ingredient-3"]').should('exist');
+    cy.addIngredientById('3');
+    cy.checkIngredientInConstructor(
+      'ingredient-3',
+      'Филе Люминесцентного тетраодонтимформа'
+    );
   });
 
   it('должен открывать и закрывать модальные окна', () => {
-    cy.get('[data-cy="ingredient-1"]').click();
-    cy.get('[data-cy="ingredient-modal"]').should('be.visible');
+    cy.openIngModalAndCheckName('1', 'Краторная булка N-200i');
+    cy.closeModalByType('modal-overlay', 'ingredient', { force: true });
 
-    cy.get('[data-cy="modal-overlay"]').click({ force: true });
-    cy.get('[data-cy="ingredient-modal"]').should('not.exist');
+    cy.openIngModalAndCheckName('2', 'Биокотлета из марсианской Магнолии');
+    cy.closeModalByType('modal-close', 'ingredient');
 
-    cy.get('[data-cy="ingredient-1"]').click();
-    cy.get('[data-cy="ingredient-modal"]').should('be.visible');
-
-    cy.get('[data-cy="modal-close"]').click();
+    cy.openIngModalAndCheckName('3', 'Филе Люминесцентного тетраодонтимформа');
+    cy.get('body').type('{esc}');
     cy.get('[data-cy="ingredient-modal"]').should('not.exist');
   });
 
   it('должен создавать заказ', () => {
-    cy.get('[data-cy="ingredient-1"]').find('button').click();
-    cy.get('[data-cy="ingredient-2"]').find('button').click();
+    cy.addIngredientById('1');
+    cy.addIngredientById('2');
 
     cy.get('[data-cy="order-button"]').click();
+    cy.wait('@postOrder');
 
-    cy.get('[data-cy="order-modal"]').should('be.visible');
-
+    cy.get('[data-cy="order-modal"]').should('exist');
     cy.get('[data-cy="order-number"]').contains('100898');
 
-    cy.get('[data-cy="modal-close"]').click();
-    cy.get('[data-cy="order-modal"]').should('not.exist');
+    cy.closeModalByType('modal-close', 'order');
 
     cy.get('[data-cy="constructor-bun"]').should('not.exist');
     cy.get('[data-cy="constructor-ingredient-2"]').should('not.exist');
